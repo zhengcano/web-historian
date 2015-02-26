@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var getter = require('http-request')
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -60,5 +61,13 @@ exports.returnUrl = function(url){
   return fs.readFileSync(exports.paths.archivedSites + '/'  + url).toString();
 };
 
-exports.downloadUrls = function(url){
+exports.downloadUrls = function(urls){
+  _.each(urls, function(url){
+    var file = fs.openSync(export.paths.archivedSites + '/' + url, "w");
+    fs.closeSync(file);
+
+    getter.get(url, file, function(err,res){
+      if (!err) console.log(res.file);
+    });
+  });
 };
