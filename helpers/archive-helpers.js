@@ -62,12 +62,30 @@ exports.returnUrl = function(url){
 };
 
 exports.downloadUrls = function(urls){
-  _.each(urls, function(url){
-    var file = fs.openSync(export.paths.archivedSites + '/' + url, "w");
-    fs.closeSync(file);
 
-    getter.get(url, file, function(err,res){
-      if (!err) console.log(res.file);
+  fs.writeFile(exports.paths.list, "", function(err, data){
+    console.log("clear");
+  });
+
+  urls.pop() //remove trailing newline
+
+  _.each(urls, function(url){
+    var path = exports.paths.archivedSites + '/' + url;
+    fs.open(path, 'w', function(err, fd){
+      getter.get(url, path, function(err, res){
+        fs.close(fd);
+
+      });
     });
   });
+  // _.each(urls, function(url){
+  //   if (url !== '') {
+  //     console.log(exports.paths.archivedSites + '/' + url);
+  //     var file = fs.open(exports.paths.archivedSites + '/' + url, "w", function(err, fd){
+  //       console.log('file: ' + fd);
+  //       fs.closeSync(fd);
+  //       console.log('past close');
+  //     });
+  //     console.log('outside open');
+  //   }
 };
