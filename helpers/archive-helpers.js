@@ -8,7 +8,7 @@ var _ = require('underscore');
  * if you move any files, you'll only need to change your code in one place! Feel free to
  * customize it in any way you wish.
  */
-
+//exports.archive = [];
 exports.paths = {
   'siteAssets' : path.join(__dirname, '../web/public'),
   'archivedSites' : path.join(__dirname, '../archives/sites'),
@@ -25,17 +25,40 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(){
+exports.readListOfUrls = function(cb){
+  fs.readFile(exports.paths.list, function(err, data){
+    cb(data.toString().split('\n'));
+  });
 };
 
-exports.isUrlInList = function(){
+exports.isUrlInList = function(target){
+  var urls = fs.readFileSync(exports.paths.list).toString().split('\n');
+  return _.contains(urls, target);
 };
 
-exports.addUrlToList = function(){
+// exports.readListOfUrls = function() {
+//   return fs.readFileSync(exports.paths.list).toString().split('\n');
+// };
+
+exports.addUrlToList = function(url){
+  if (!exports.isUrlInList(url)){
+    fs.appendFile(exports.paths.list, url.toString() + '\n', function (err){
+      if (err) {throw err;}
+      console.log('data appended');
+    });
+  } else {
+    console.log('url already in list');
+  }
 };
 
-exports.isURLArchived = function(){
+exports.isURLArchived = function(url){
+
+  return _.contains(fs.readdirSync(exports.paths.archivedSites),url);
 };
 
-exports.downloadUrls = function(){
+exports.returnUrl = function(url){
+  return fs.readFileSync(exports.paths.archivedSites + '/'  + url).toString();
+};
+
+exports.downloadUrls = function(url){
 };
